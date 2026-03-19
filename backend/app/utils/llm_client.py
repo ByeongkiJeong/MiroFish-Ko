@@ -61,9 +61,14 @@ class LLMClient:
         if response_format:
             kwargs["response_format"] = response_format
         
-        response = self.client.chat.completions.create(**kwargs)
+        try:
+            response = self.client.chat.completions.create(**kwargs)
+        except Exception as e:
+            print(f"[LLM ERROR] create() 예외 발생: {type(e).__name__}: {e}", flush=True)
+            raise
+        print(f"[LLM RAW RESPONSE] finish_reason: {response.choices[0].finish_reason}", flush=True)
         content = response.choices[0].message.content
-        print(f"[LLM RAW RESPONSE] repr: {repr(content[:500])}", flush=True)
+        print(f"[LLM RAW RESPONSE] repr: {repr(content[:500]) if content else 'None'}", flush=True)
         # 일부 모델(예: MiniMax M2.5)은 content에 <think>를 포함하므로 제거
         content = re.sub(r'<think>[\s\S]*?</think>', '', content).strip()
         return content
