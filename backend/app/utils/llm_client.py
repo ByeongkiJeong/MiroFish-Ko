@@ -63,6 +63,7 @@ class LLMClient:
         
         response = self.client.chat.completions.create(**kwargs)
         content = response.choices[0].message.content
+        print(f"[LLM RAW RESPONSE] repr: {repr(content[:500])}", flush=True)
         # 일부 모델(예: MiniMax M2.5)은 content에 <think>를 포함하므로 제거
         content = re.sub(r'<think>[\s\S]*?</think>', '', content).strip()
         return content
@@ -92,9 +93,12 @@ class LLMClient:
         )
         # 마크다운 코드 블록 표기 제거
         cleaned_response = response.strip()
+        print(f"[chat_json] after strip: {repr(cleaned_response[:300])}", flush=True)
         cleaned_response = re.sub(r'^```(?:json)?\s*\n*', '', cleaned_response, flags=re.IGNORECASE)
+        print(f"[chat_json] after fence-open removal: {repr(cleaned_response[:300])}", flush=True)
         cleaned_response = re.sub(r'\n?```\s*$', '', cleaned_response)
         cleaned_response = cleaned_response.strip()
+        print(f"[chat_json] final cleaned: {repr(cleaned_response[:300])}", flush=True)
 
         try:
             return json.loads(cleaned_response)
