@@ -195,6 +195,24 @@ Default runtime contract:
 - authoritative parity evidence must come from `run_local_candidate_capture.py --mode provider`
 - `inline` candidate capture is debug-only and must not be used for cutover approval
 
+#### NEW (2026-03-19): `GRAPH_BACKEND` 전환 가이드
+
+- `GRAPH_BACKEND=zep`: Zep를 주 그래프 백엔드로 사용합니다. `ZEP_API_KEY`가 필요합니다.
+- `GRAPH_BACKEND=shadow_eval`: Zep를 주 백엔드로 유지하면서 로컬 엔진 쪽 shadow evaluation도 함께 수집합니다. `ZEP_API_KEY`와 `ENGINE_BASE_URL`이 필요합니다.
+- `GRAPH_BACKEND=local_primary`: 로컬 엔진을 주 그래프 백엔드로 사용합니다. `ZEP_API_KEY`는 필요 없지만, 로컬 엔진이 실행 중이어야 하고 cutover gate를 통과해야 합니다.
+- `ENGINE_BASE_URL=http://127.0.0.1:8123`는 로컬 엔진 주소입니다.
+
+빠른 전환 예시:
+
+```env
+# Zep 유지
+GRAPH_BACKEND=zep
+
+# 로컬 엔진으로 전환
+GRAPH_BACKEND=local_primary
+ENGINE_BASE_URL=http://127.0.0.1:8123
+```
+
 ### 옵션 2: Docker 배포
 
 ```bash

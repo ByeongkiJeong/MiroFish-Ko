@@ -191,6 +191,24 @@ Default runtime contract:
 - `GRAPHITI_STDOUT_LOGGING=true`
 - cutover to `local_primary` requires parity scorecards and compatibility gates to pass
 
+#### NEW (2026-03-19): `GRAPH_BACKEND` Switching Guide
+
+- `GRAPH_BACKEND=zep`: use Zep as the primary graph backend. `ZEP_API_KEY` is required.
+- `GRAPH_BACKEND=shadow_eval`: keep Zep as primary while also collecting local-engine shadow evaluation. `ZEP_API_KEY` and `ENGINE_BASE_URL` are required.
+- `GRAPH_BACKEND=local_primary`: use the local engine as the primary graph backend. `ZEP_API_KEY` is not required, but the local engine must be running and the cutover gate must pass.
+- `ENGINE_BASE_URL=http://127.0.0.1:8123` is the local engine address.
+
+Quick switch examples:
+
+```env
+# Stay on Zep
+GRAPH_BACKEND=zep
+
+# Switch to the local engine
+GRAPH_BACKEND=local_primary
+ENGINE_BASE_URL=http://127.0.0.1:8123
+```
+
 ### Docker 
 
 ```bash
