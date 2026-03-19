@@ -92,11 +92,18 @@ class LLMClient:
         )
         # 마크다운 코드 블록 표기 제거
         cleaned_response = response.strip()
-        cleaned_response = re.sub(r'^```(?:json)?\s*\n?', '', cleaned_response, flags=re.IGNORECASE)
+        cleaned_response = re.sub(r'^```(?:json)?\s*\n*', '', cleaned_response, flags=re.IGNORECASE)
         cleaned_response = re.sub(r'\n?```\s*$', '', cleaned_response)
         cleaned_response = cleaned_response.strip()
 
         try:
             return json.loads(cleaned_response)
         except json.JSONDecodeError:
-            raise ValueError(f"LLM이 반환한 JSON 형식이 올바르지 않습니다: {cleaned_response}")
+            # 응답에 설명 텍스트가 섞인 경우 JSON 부분만 추출 시도
+            json_match = re.search(r'\{[\s\S]*\}', cleaned_response)
+            if json_match:
+                try:
+                    return json.loads(json_match.group())
+                except json.JSONDecodeError:
+                    pass
+            raise ValueError(f"LLM이 반환한 JSON 형식이 올바르지 않습니다: {cleaned_response[:200]}")
